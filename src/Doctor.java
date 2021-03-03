@@ -16,7 +16,7 @@ class Doctor {
     private Database db;
     private Scanner input;
     
-    void createDoctorTable() {
+    void createDoctorTable() throws Throwable {
         String doctorTable = "CREATE TABLE IF NOT EXISTS doctor (\n"
                 + "     d_id int PRIMARY KEY, \n"
                 + "     d_name Varchar(40), \n"
@@ -44,6 +44,8 @@ class Doctor {
             statement.setString(5, getAppoint());
             statement.setInt(6, getdRoom());
             statement.executeUpdate();
+
+            connection.close();
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -92,7 +94,7 @@ class Doctor {
         return this.dRoom;
     }
 
-    void getDoctor() {
+    void getDoctor() throws Throwable {
 
         String sql = "SELECT d_id, d_name, specialist, appoint, doc_qual, d_room FROM doctor ORDER BY d_id";
 
@@ -121,26 +123,123 @@ class Doctor {
                     resultSet.getString("doc_qual"), resultSet.getInt("d_room"));
         }
     }
-    
-    void getDoctorIdToDelete() {
+
+    void deleteDoctor() {
         input = new Scanner(System.in);
         System.out.print("Which doctor id should be deleted?");
         this.dId = input.nextInt();
-        deleteDoctor(dId);
-    }
-    
-    private void deleteDoctor(int dId) {
+        
         String sql = "DELETE FROM doctor WHERE d_id = ?";
         db = new Database();
-        
+
         try (Connection connection = db.connectToDB();
                 PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             statement.setInt(1, dId);
             statement.executeUpdate();
-            
+            connection.close();
+
         } catch (SQLException e) {
-            System.out.println(e.getMessage());   
+            System.out.println(e.getMessage());
+        }
+    }
+
+    void chooseUpdate() throws Throwable {
+        String choice;
+        input = new Scanner(System.in);
+
+        String promptBasedOnChoice;
+        String updateSQL;
+
+        Integer updateSelectionInteger = null;
+        String updateSelection = "";
+
+        System.out.print("\nEnter the letter of the update that you would like to make."
+                + "\na. Change the doctor's name" + "\nb. Change the doctor's appointment times"
+                + "\nc. Change specialist" + "\nd. Change qualifications" + "\ne. Change room number\n");
+        choice = input.next();
+
+        switch (choice) {
+            case "a":
+                this.dId = getIdOfDoctorToUpdate();
+                promptBasedOnChoice = "\nWhat would you like to change the doctor's name to?";
+                updateSQL = "UPDATE doctor " + "SET d_name = ? " + "WHERE d_id = ?";
+                updateDoctor(this.dId, this.dName, updateSQL, promptBasedOnChoice, updateSelectionInteger);
+                break;
+
+            case "b":
+                this.dId = getIdOfDoctorToUpdate();
+                promptBasedOnChoice = "\nWhen would you like to update the doctor's appointment times to take place?";
+                updateSQL = "UPDATE doctor " + "SET appoint = ? " + "WHERE d_id = ?";
+                updateDoctor(this.dId, this.appoint, updateSQL, promptBasedOnChoice, updateSelectionInteger);
+                break;
+
+            case "c":
+                this.dId = getIdOfDoctorToUpdate();
+                promptBasedOnChoice = "\nWhat would you like to change specialist to? ";
+                updateSQL = "UPDATE doctor " + "SET specialist = ? " + "WHERE d_id = ?";
+                updateDoctor(this.dId, this.specialist, updateSQL, promptBasedOnChoice, updateSelectionInteger);
+                break;
+
+            case "d":
+                this.dId = getIdOfDoctorToUpdate();
+                promptBasedOnChoice = "\nWhat would you like to change the qualifications to? ";
+                updateSQL = "UPDATE doctor " + "SET doc_qual = ? " + "WHERE d_id = ?";
+                updateDoctor(this.dId, this.docQual, updateSQL, promptBasedOnChoice, updateSelectionInteger);
+                break;
+
+            case "e":
+                this.dId = getIdOfDoctorToUpdate();
+                promptBasedOnChoice = "\nWhat is the doctor's new room number? ";
+                updateSQL = "UPDATE doctor " + "SET d_room = ? " + "WHERE d_id = ?";
+                Integer dRoomInteger = dRoom;
+                updateDoctor(this.dId, updateSelection, updateSQL, promptBasedOnChoice, dRoomInteger);
+                break;
+        }
+    }
+
+    private int getIdOfDoctorToUpdate() {
+        input = new Scanner(System.in);
+        System.out.print("\nWhat is the id that corresponds with the doctor that you want to update? ");
+        return input.nextInt();
+    }
+
+    private void updateDoctor(int dId, String updateSelection, String sql, String prompt,
+            Integer updateSelectionInteger) {
+        input = new Scanner(System.in);
+        System.out.print(prompt);
+        int updateSelectionInt = updateSelectionInteger.intValue();
+
+        db = new Database();
+
+        if (updateSelection != "") {
+            updateSelection = input.next();
+            try (Connection connection = db.connectToDB();
+                    PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                statement.setString(1, updateSelection);
+                statement.setInt(2, this.dId);
+
+                statement.executeUpdate();
+                connection.close();
+
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+        else if (updateSelectionInteger != null) {
+            updateSelectionInt = input.nextInt();
+            try (Connection connection = db.connectToDB();
+                    PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                statement.setInt(1, updateSelectionInt);
+                statement.setInt(2, this.dId);
+
+                statement.executeUpdate();
+                connection.close();
+
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
         }
     }
 }

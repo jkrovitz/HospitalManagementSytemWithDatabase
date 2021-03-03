@@ -1,5 +1,4 @@
 import java.io.*;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.Calendar;
 
@@ -23,8 +22,8 @@ class HospitalMgmtSystem {
     private static Staff staff;
     private static Scanner input;
     
-    public static void main(String args[]) throws IOException, DoctorException, SQLException {
-
+    public static void main(String args[]) throws Throwable {
+        
         doctor = new Doctor();
         doctor.createDoctorTable();
 
@@ -119,7 +118,7 @@ class HospitalMgmtSystem {
         System.out.println("-----------------------------------------------------------------------------------");
     }
 
-    private static void doctorOption() throws IOException, DoctorException {
+    private static void doctorOption() throws Throwable {
         System.out.println("--------------------------------------------------------------------------------");
         System.out.println(" **DOCTOR SECTION**");
         System.out.println("--------------------------------------------------------------------------------");
@@ -129,7 +128,7 @@ class HospitalMgmtSystem {
 
         while (s1 == 1) {
             doctor = new Doctor();
-            System.out.println("1.Add New Entry\n2.Existing Doctors List\n3.Delete Doctor");
+            System.out.println("1.Add New Entry\n2.Existing Doctors List\n3.Delete Doctor\n4.Update Doctor");
             c1 = input.nextInt();
             switch (c1)
             {
@@ -142,7 +141,11 @@ class HospitalMgmtSystem {
                     break;
                 }
                 case 3: {
-                    doctor.getDoctorIdToDelete();
+                    doctor.deleteDoctor();
+                    break;
+                }
+                case 4: {
+                    doctor.chooseUpdate();
                     break;
                 }
             }
@@ -174,7 +177,6 @@ class HospitalMgmtSystem {
                     patient.getPatient();
                     break;
                 }
-
             }
             System.out.println();
             System.out.println("\nReturn to Back Press 1 and for Main Menu Press 0");
