@@ -10,7 +10,7 @@ import java.sql.*;
  * on 6 Nov. 2017. Original source code available here: 
  * https://www.programmingwithbasics.com/2017/11/hospital-management-system-project-in.html
  */
-class Doctor {
+class Doctor extends Database {
     private String specialist, appoint, docQual, dName;
     private int dId, dRoom;
     private Database db;
@@ -117,6 +117,9 @@ class Doctor {
     void displayDoctor(ResultSet resultSet) throws SQLException {
         System.out.printf("%-25s%-25s%-25s%-25s%-25s%-25s\n", "Doctor ID", "Doctor Name", "Specialist",
                 "Appointment Times", "Qualificaitons", "Room Number");
+        System.out.println("---------------------------------------------"
+                + "-------------------------------------------------------"
+                + "------------------------------------");
         while (resultSet.next()) {
             System.out.printf("%-25d%-25s%-25s%-25s%-25s%-25d\n", resultSet.getInt("d_id"),
                     resultSet.getString("d_name"), resultSet.getString("specialist"), resultSet.getString("appoint"),
@@ -125,26 +128,13 @@ class Doctor {
     }
 
     void deleteDoctor() {
-        input = new Scanner(System.in);
-        System.out.print("Which doctor id should be deleted?");
-        this.dId = input.nextInt();
-        
         String sql = "DELETE FROM doctor WHERE d_id = ?";
-        db = new Database();
-
-        try (Connection connection = db.connectToDB();
-                PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
-            statement.setInt(1, dId);
-            statement.executeUpdate();
-            connection.close();
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
+        String entity = "doctor";
+        
+        super.deleteEntity(entity, sql);
     }
 
-    void chooseUpdate() throws Throwable {
+    void chooseDoctorUpdate() throws Throwable {
         String choice;
         input = new Scanner(System.in);
 
@@ -155,91 +145,49 @@ class Doctor {
         String updateSelection = "";
 
         System.out.print("\nEnter the letter of the update that you would like to make."
-                + "\na. Change the doctor's name" + "\nb. Change the doctor's appointment times"
-                + "\nc. Change specialist" + "\nd. Change qualifications" + "\ne. Change room number\n");
+                + "\na. Change the doctor's name"
+                + "\nb. Change the doctor's appointment times"
+                + "\nc. Change specialist"
+                + "\nd. Change qualifications"
+                + "\ne. Change room number\n");
         choice = input.next();
 
         switch (choice) {
             case "a":
-                this.dId = getIdOfDoctorToUpdate();
+                this.dId = super.getIdOfEntityToUpdate("doctor");
                 promptBasedOnChoice = "\nWhat would you like to change the doctor's name to?";
                 updateSQL = "UPDATE doctor " + "SET d_name = ? " + "WHERE d_id = ?";
-                updateDoctor(this.dId, this.dName, updateSQL, promptBasedOnChoice, updateSelectionInteger);
+                super.updateEntity(this.dId, this.dName, updateSQL, promptBasedOnChoice, updateSelectionInteger);
                 break;
 
             case "b":
-                this.dId = getIdOfDoctorToUpdate();
+                this.dId = super.getIdOfEntityToUpdate("doctor");
                 promptBasedOnChoice = "\nWhen would you like to update the doctor's appointment times to take place?";
                 updateSQL = "UPDATE doctor " + "SET appoint = ? " + "WHERE d_id = ?";
-                updateDoctor(this.dId, this.appoint, updateSQL, promptBasedOnChoice, updateSelectionInteger);
+                super.updateEntity(this.dId, this.appoint, updateSQL, promptBasedOnChoice, updateSelectionInteger);
                 break;
 
             case "c":
-                this.dId = getIdOfDoctorToUpdate();
+                this.dId = super.getIdOfEntityToUpdate("doctor");
                 promptBasedOnChoice = "\nWhat would you like to change specialist to? ";
                 updateSQL = "UPDATE doctor " + "SET specialist = ? " + "WHERE d_id = ?";
-                updateDoctor(this.dId, this.specialist, updateSQL, promptBasedOnChoice, updateSelectionInteger);
+                super.updateEntity(this.dId, this.specialist, updateSQL, promptBasedOnChoice, updateSelectionInteger);
                 break;
 
             case "d":
-                this.dId = getIdOfDoctorToUpdate();
+                this.dId = super.getIdOfEntityToUpdate("doctor");
                 promptBasedOnChoice = "\nWhat would you like to change the qualifications to? ";
                 updateSQL = "UPDATE doctor " + "SET doc_qual = ? " + "WHERE d_id = ?";
-                updateDoctor(this.dId, this.docQual, updateSQL, promptBasedOnChoice, updateSelectionInteger);
+                super.updateEntity(this.dId, this.docQual, updateSQL, promptBasedOnChoice, updateSelectionInteger);
                 break;
 
             case "e":
-                this.dId = getIdOfDoctorToUpdate();
+                this.dId = super.getIdOfEntityToUpdate("doctor");
                 promptBasedOnChoice = "\nWhat is the doctor's new room number? ";
                 updateSQL = "UPDATE doctor " + "SET d_room = ? " + "WHERE d_id = ?";
                 Integer dRoomInteger = dRoom;
-                updateDoctor(this.dId, updateSelection, updateSQL, promptBasedOnChoice, dRoomInteger);
+                super.updateEntity(this.dId, updateSelection, updateSQL, promptBasedOnChoice, dRoomInteger);
                 break;
-        }
-    }
-
-    private int getIdOfDoctorToUpdate() {
-        input = new Scanner(System.in);
-        System.out.print("\nWhat is the id that corresponds with the doctor that you want to update? ");
-        return input.nextInt();
-    }
-
-    private void updateDoctor(int dId, String updateSelection, String sql, String prompt,
-            Integer updateSelectionInteger) {
-        input = new Scanner(System.in);
-        System.out.print(prompt);
-        int updateSelectionInt = updateSelectionInteger.intValue();
-
-        db = new Database();
-
-        if (updateSelection != "") {
-            updateSelection = input.next();
-            try (Connection connection = db.connectToDB();
-                    PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-                statement.setString(1, updateSelection);
-                statement.setInt(2, this.dId);
-
-                statement.executeUpdate();
-                connection.close();
-
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-
-        else if (updateSelectionInteger != null) {
-            updateSelectionInt = input.nextInt();
-            try (Connection connection = db.connectToDB();
-                    PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-                statement.setInt(1, updateSelectionInt);
-                statement.setInt(2, this.dId);
-
-                statement.executeUpdate();
-                connection.close();
-
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            }
         }
     }
 }

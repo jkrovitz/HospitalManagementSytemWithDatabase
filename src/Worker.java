@@ -13,11 +13,25 @@
 class Worker extends Staff {
 
     void insertWorker() {
-        super.insertStaff("worker");
+        super.insertStaff("Worker");
     }
     
     void getWorker() {
-        String sql = "SELECT staff_id, staff_name, desg, sex, salary FROM staff WHERE desg = worker";
+        String sql = "SELECT staff_id, staff_name, desg, sex, salary FROM staff WHERE desg = Worker";
         super.getStaff(sql);
+    }
+    
+    void chooseWorkerUpdate() throws Throwable {
+        String sqlA = "UPDATE staff " + "SET staff_name = ? " + "WHERE staff_id = ? and desg = 'Worker'";
+        String sqlB = "UPDATE staff " + "SET sex = ? " + "WHERE staff_id = ? and desg = 'Worker'";
+        String sqlC = "UPDATE staff " + "SET salary = ? " + "WHERE staff_id = ? and desg = 'Worker'";
+        super.chooseStaffUpdate("Worker", sqlA, sqlB, sqlC);
+    }
+    
+    void deleteWorker() {
+        String sql = "DELETE FROM staff WHERE staff_id = ? and desg = 'Worker'";
+        String entity = "Worker";
+        
+        super.deleteEntity(entity, sql);
     }
 }

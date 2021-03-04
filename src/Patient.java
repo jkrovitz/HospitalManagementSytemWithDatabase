@@ -127,6 +127,9 @@ class Patient
     void displayPatient(ResultSet resultSet) throws SQLException {
         System.out.printf("%-25s%-25s%-25s%-25s%-25s%-25s\n",
                 "Patient ID","Patient Name","Disease","Gender","Admit Status","Age");
+        System.out.println("---------------------------------------------"
+                + "-------------------------------------------------------"
+                + "----------------------------");
         while (resultSet.next()) {
             System.out.printf("%-25d%-25s%-25s%-25s%-25s%-25d\n",
                     resultSet.getInt("p_id"),
@@ -136,5 +139,107 @@ class Patient
                     resultSet.getString("admit_status"),
                     resultSet.getInt("age"));    
         }   
+    }
+    
+    void choosePatientUpdate() throws Throwable {
+        String choice;
+        input = new Scanner(System.in);
+
+        String promptBasedOnChoice;
+        String updateSQL;
+
+        Integer updateSelectionInteger = null;
+        String updateSelection = "";
+
+        System.out.print("\nEnter the letter of the update that you would like to make."
+                + "\na. Change the patient's name" 
+                + "\nb. Change the patient's disease"
+                + "\nc. Change gender"
+                + "\nd. Change admit status"
+                + "\ne. Change age\n");
+        choice = input.next();
+
+        switch (choice) {
+            case "a":
+                this.pId = getIdOfPatientToUpdate();
+                promptBasedOnChoice = "\nWhat would you like to change the patient's name to? ";
+                updateSQL = "UPDATE patient " + "SET p_name = ? " + "WHERE p_id = ?";
+                updatePatient(this.pId, this.pName, updateSQL, promptBasedOnChoice, updateSelectionInteger);
+                break;
+
+            case "b":
+                this.pId = getIdOfPatientToUpdate();
+                promptBasedOnChoice = "\nWhat would you like to change the patient's disease to? ";
+                updateSQL = "UPDATE patient " + "SET disease = ? " + "WHERE p_id = ?";
+                updatePatient(this.pId, this.disease, updateSQL, promptBasedOnChoice, updateSelectionInteger);
+                break;
+
+            case "c":
+                this.pId = getIdOfPatientToUpdate();
+                promptBasedOnChoice = "\nWhat would you like to change the patient's gender to? ";
+                updateSQL = "UPDATE patient " + "SET sex = ? " + "WHERE p_id = ?";
+                updatePatient(this.pId, this.sex, updateSQL, promptBasedOnChoice, updateSelectionInteger);
+                break;
+
+            case "d":
+                this.pId = getIdOfPatientToUpdate();
+                promptBasedOnChoice = "\nWhat would you like to change the admit status to? ";
+                updateSQL = "UPDATE patient " + "SET admit_status = ? " + "WHERE p_id = ?";
+                updatePatient(this.pId, this.admitStatus, updateSQL, promptBasedOnChoice, updateSelectionInteger);
+                break;
+
+            case "e":
+                this.pId = getIdOfPatientToUpdate();
+                promptBasedOnChoice = "\nWhat should the patient's age be updated to? ";
+                updateSQL = "UPDATE patient " + "SET age = ? " + "WHERE p_id = ?";
+                Integer ageInteger = age;
+                updatePatient(this.pId, updateSelection, updateSQL, promptBasedOnChoice, ageInteger);
+                break;
+        }
+    }
+
+    private int getIdOfPatientToUpdate() {
+        input = new Scanner(System.in);
+        System.out.print("\nWhat is the id that corresponds with the patient that you want to update? ");
+        return input.nextInt();
+    }
+
+    private void updatePatient(int pId, String updateSelection, String sql, String prompt,
+            Integer updateSelectionInteger) {
+        input = new Scanner(System.in);
+        System.out.print(prompt);
+
+        db = new Database();
+
+        if (updateSelection != "") {
+            updateSelection = input.next();
+            try (Connection connection = db.connectToDB();
+                    PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                statement.setString(1, updateSelection);
+                statement.setInt(2, this.pId);
+
+                statement.executeUpdate();
+                connection.close();
+
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+        else if (updateSelectionInteger != null) {
+            int updateSelectionInt = updateSelectionInteger.intValue();
+            updateSelectionInt = input.nextInt();
+            try (Connection connection = db.connectToDB();
+                    PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                statement.setInt(1, updateSelectionInt);
+                statement.setInt(2, this.pId);
+
+                statement.executeUpdate();
+                connection.close();
+
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
     }
 }

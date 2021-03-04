@@ -1,6 +1,4 @@
-import java.io.*;
 import java.util.*;
-import java.util.Calendar;
 
 /**
  * HospitalMgmtSystem.java
@@ -42,10 +40,10 @@ class HospitalMgmtSystem {
         staff = new Staff();
         staff.createStaffTable();
 
+        welcome();
+        
         int choice, status = 1;
         input = new Scanner(System.in);
-
-        welcome();
 
         while (status == 1) {
             mainMenu();
@@ -92,30 +90,49 @@ class HospitalMgmtSystem {
     private static void welcome() {
         String months[] = {
 
-                "Jan", "Feb", "Mar", "Apr",
+                "January", "February", "March", "April",
 
-                "May", "Jun", "Jul", "Aug",
+                "May", "June", "July", "August",
 
-                "Sep", "Oct", "Nov", "Dec" };
+                "September", "October", "November", "December" };
+        
+        String days[] = {
+
+                "Saturday", "Sunday", "Monday", "Tuesday", "Wednesday",
+
+                "Thursday", "Friday"};
 
         Calendar calendar = Calendar.getInstance();
 
-        System.out.println("\n--------------------------------------------------------------------------------");
+        System.out.println("----------------------------------------------------------------------------------------");
         System.out.println(" *** Welcome to Hospital Management System Project in Java ***");
-        System.out.println("--------------------------------------------------------------------------------");
+        System.out.println("----------------------------------------------------------------------------------------");
 
-        System.out.print("Date: " + months[calendar.get(Calendar.MONTH)] + " " + calendar.get(Calendar.DATE) + " "
+        int mins = calendar.get(Calendar.MINUTE);
+        String minutes = String.format("%02d", mins);
+        
+        int secs = calendar.get(Calendar.SECOND);
+        String seconds = String.format("%02d", secs);
+        
+        int amOrPmInt = calendar.get(Calendar.AM_PM);
+        String amOrPm = null;
+        if (amOrPmInt == 0)
+            amOrPm = "AM";
+        else
+            amOrPm = "PM";
+        
+        System.out.print("Date: " + days[calendar.get(Calendar.DAY_OF_WEEK)] + ", " + months[calendar.get(Calendar.MONTH)] + " " + calendar.get(Calendar.DATE) + ", "
                 + calendar.get(Calendar.YEAR));
 
-        System.out.println("\t\t\t\t\t\tTime: " + calendar.get(Calendar.HOUR) + ":" + calendar.get(Calendar.MINUTE)
-                + ":" + calendar.get(Calendar.SECOND));
+        System.out.println("\t\t\t\t\t\tTime: " + calendar.get(Calendar.HOUR) + ":" + minutes
+                + ":" + seconds + " " + amOrPm);
     }
 
     private static void mainMenu() {
         System.out.println("\n MAIN MENU");
-        System.out.println("-----------------------------------------------------------------------------------");
+        System.out.println("----------------------------------------------------------------------------------------");
         System.out.println("1.Doctors 2. Patients 3.Medicines 4.Laboratories 5. Facilities 6. Staff ");
-        System.out.println("-----------------------------------------------------------------------------------");
+        System.out.println("----------------------------------------------------------------------------------------");
     }
 
     private static void doctorOption() throws Throwable {
@@ -128,7 +145,10 @@ class HospitalMgmtSystem {
 
         while (s1 == 1) {
             doctor = new Doctor();
-            System.out.println("1.Add New Entry\n2.Existing Doctors List\n3.Delete Doctor\n4.Update Doctor");
+            System.out.println("1. Add New Entry"
+                    + "\n2. Existing Doctors List"
+                    + "\n3. Update Doctor"
+                    + "\n4. Delete Doctor");
             c1 = input.nextInt();
             switch (c1)
             {
@@ -141,11 +161,11 @@ class HospitalMgmtSystem {
                     break;
                 }
                 case 3: {
-                    doctor.deleteDoctor();
+                    doctor.chooseDoctorUpdate();
                     break;
                 }
                 case 4: {
-                    doctor.chooseUpdate();
+                    doctor.deleteDoctor();
                     break;
                 }
             }
@@ -155,7 +175,7 @@ class HospitalMgmtSystem {
 
     }
 
-    private static void patientOption() throws IOException {
+    private static void patientOption() throws Throwable {
         System.out.println("--------------------------------------------------------------------------------");
         System.out.println(" **PATIENT SECTION**");
         System.out.println("--------------------------------------------------------------------------------");
@@ -165,7 +185,9 @@ class HospitalMgmtSystem {
 
         while (s2 == 1) {
             patient = new Patient();
-            System.out.println("1.Add New Entry\n2.Existing Patients List");
+            System.out.println("1.Add New Entry"
+                    + "\n2.Existing Patients List"
+                    + "\n3.Update Patient");
             c1 = input.nextInt();
             switch (c1) {
                 case 1: {
@@ -177,6 +199,11 @@ class HospitalMgmtSystem {
                     patient.getPatient();
                     break;
                 }
+                
+                case 3: {
+                    patient.choosePatientUpdate();
+                    break;
+                }
             }
             System.out.println();
             System.out.println("\nReturn to Back Press 1 and for Main Menu Press 0");
@@ -184,7 +211,7 @@ class HospitalMgmtSystem {
         }
     }
 
-    private static void medicineOption() throws IOException {
+    private static void medicineOption() throws Throwable {
         System.out.println("--------------------------------------------------------------------------------");
         System.out.println(" **MEDICINE SECTION**");
         System.out.println("--------------------------------------------------------------------------------");
@@ -194,28 +221,36 @@ class HospitalMgmtSystem {
 
         while (s3 == 1) {
             medicine = new Medicine();
-            System.out.println("1.Add New Entry\n2. Existing Medicines List");
+            System.out.println("1. Add New Entry"
+                    + "\n2. Existing Medicines List"
+                    + "\n3. Update Medicine"
+                    + "\n4. Delete Medicine");
             c1 = input.nextInt();
 
             switch (c1) {
-
                 case 1: {
                     medicine.insertMedicine();
                     break;
                 }
-
                 case 2: {
                     medicine.getMedicine();
                     break;
                 }
-
+                case 3: {
+                    medicine.chooseMedicineUpdate();
+                    break;
+                }
+                case 4: {
+                    medicine.deleteMedicine();
+                    break;
+                }
             }
             System.out.println("\nReturn to Back Press 1 and for Main Menu Press 0");
             s3 = input.nextInt();
         }
     }
 
-    private static void labOption() throws IOException {
+    private static void labOption() throws Throwable {
         int c1, s4 = 1;
         input = new Scanner(System.in);
 
@@ -223,25 +258,29 @@ class HospitalMgmtSystem {
         System.out.println(" **LABORATORY SECTION**");
         System.out.println("--------------------------------------------------------------------------------");
 
-        while (s4 == 1)
-
-        {
+        while (s4 == 1) {
             lab = new Lab();
-            System.out.println("1.Add New Entry \n2.Existing Laboratories List");
+            System.out.println("1. Add New Entry"
+                    + "\n2. Existing Laboratories List"
+                    + "\n3. Update Lab"
+                    + "\n4. Delete Lab");
             c1 = input.nextInt();
-
-            switch (c1)
-
-            {
+            
+            switch (c1) {
                 case 1: {
                     lab.insertLab();
                     break;
                 }
-
-                case 2:
-
-                {
+                case 2: {
                     lab.getLab();
+                    break;
+                }
+                case 3: {
+                    lab.chooseLabUpdate();
+                    break;
+                }
+                case 4: {
+                    lab.deleteLab();
                     break;
                 }
             }
@@ -251,7 +290,7 @@ class HospitalMgmtSystem {
         }
     }
 
-    private static void facilityOption() throws IOException {
+    private static void facilityOption() throws Throwable {
         int c1, s5 = 1;
         input = new Scanner(System.in);
 
@@ -263,7 +302,10 @@ class HospitalMgmtSystem {
 
         {
             facility = new Facility();
-            System.out.println("1.Add New Facility\n2.Existing Facilities List");
+            System.out.println("1. Add New Facility"
+                    + "\n2. Existing Facilities List"
+                    + "\n3. Update Facility"
+                    + "\n4. Delete Facility");
             c1 = input.nextInt();
 
             switch (c1) {
@@ -275,6 +317,14 @@ class HospitalMgmtSystem {
                     facility.getFacility();
                     break;
                 }
+                case 3: {
+                    facility.chooseFacilityUpdate();
+                    break;
+                }
+                case 4: {
+                    facility.deleteFacility();
+                    break;
+                }
             }
             System.out.println("\nReturn to Back Press 1 and for Main Menu Press 0");
             s5 = input.nextInt();
@@ -282,7 +332,7 @@ class HospitalMgmtSystem {
 
     }
 
-    private static void staffOption() throws IOException {
+    private static void staffOption() throws Throwable {
         String c2;
         int s6 = 1;
         input = new Scanner(System.in);
@@ -295,7 +345,7 @@ class HospitalMgmtSystem {
 
         {
             final String a = "a", b = "b", c = "c";
-            System.out.println("a.Nurses\nb.Workers\nc.Security");
+            System.out.println("a. Nurses\nb. Workers\nc. Security");
 
             System.out.println("\nFor Main Menu, Press 0");
 
@@ -308,58 +358,53 @@ class HospitalMgmtSystem {
                 c2 = input.next();
 
                 switch (c2)
-
                 {
-
                     case a: {
                         nurseOption();
                         break;
-
                     }
-
                     case b: {
                         workerOption();
                         break;
-
                     }
-
                     case c: {
                         securityOption();
                         break;
-
                     }
-
                 }
             }
-
         }
     }
-
-    private static void nurseOption() throws IOException {
+    
+    private static void nurseOption() throws Throwable {
         int sub1 = 1, c3;
         input = new Scanner(System.in);
 
         while (sub1 == 1) {
             Nurse nurse = new Nurse();
-            System.out.println("1.Add New Entry \n2.Existing Nurses List");
+            System.out.println("1. Add New Entry"
+                    + "\n2. Existing Nurses List"
+                    + "\n3. Update Nurse"
+                    + "\n4. Delete Nurse");
 
             c3 = input.nextInt();
 
             switch (c3) {
 
                 case 1: {
-
                     nurse.insertNurse();
                     break;
                 }
                 case 2: {
-                    System.out.println(
-                            "--------------------------------------------------------------------------------");
-                    System.out.println("id \t Name \t Gender \t Salary");
-                    System.out.println(
-                            "--------------------------------------------------------------------------------");
-
                     nurse.getNurse();
+                    break;
+                }
+                case 3: {
+                    nurse.chooseNurseUpdate();
+                    break;
+                }
+                case 4: {
+                    nurse.deleteNurse();
                     break;
                 }
             }
@@ -374,29 +419,33 @@ class HospitalMgmtSystem {
         input.nextInt();
     }
 
-    private static void workerOption() throws IOException {
+    private static void workerOption() throws Throwable {
         int sub2 = 1, c3;
         input = new Scanner(System.in);
 
         while (sub2 == 1) {
             Worker worker = new Worker();
-            System.out.println("1.Add New Entry \n2.Existing Worker List");
+            System.out.println("1. Add New Entry"
+                    + "\n2. Existing Worker List"
+                    + "\n3. Update Worker"
+                    + "\n4. Delete Worker");
             c3 = input.nextInt();
 
             switch (c3) {
                 case 1: {
-
                     worker.insertWorker();
                     break;
                 }
                 case 2: {
-                    System.out.println(
-                            "--------------------------------------------------------------------------------");
-                    System.out.println("id \t Name \t Gender \t Salary");
-                    System.out.println(
-                            "--------------------------------------------------------------------------------");
-
                     worker.getWorker();
+                    break;
+                }
+                case 3: {
+                    worker.chooseWorkerUpdate();
+                    break;
+                }
+                case 4: {
+                    worker.deleteWorker();
                     break;
                 }
             }
@@ -411,30 +460,34 @@ class HospitalMgmtSystem {
         input.nextInt();
     }
 
-    private static void securityOption() throws IOException {
+    private static void securityOption() throws Throwable {
 
         int sub3 = 1, c3;
         input = new Scanner(System.in);
 
         while (sub3 == 1) {
             Security security = new Security();
-            System.out.println("1.Add New Entry \n2.Existing Security List");
+            System.out.println("1. Add New Entry"
+                    + "\n2. Existing Security List"
+                    + "\n3. Update Security"
+                    + "\n4. Delete Security");
             c3 = input.nextInt();
 
             switch (c3) {
                 case 1: {
-
                     security.insertSecurity();
                     break;
                 }
                 case 2: {
-                    System.out.println(
-                            "--------------------------------------------------------------------------------");
-                    System.out.println("id \t Name \t Gender \t Salary");
-                    System.out.println(
-                            "--------------------------------------------------------------------------------");
-
                     security.getSecurity();
+                    break;
+                }
+                case 3: {
+                    security.chooseSecurityUpdate();
+                    break;
+                }
+                case 4: {
+                    security.deleteSecurity();
                     break;
                 }
             }

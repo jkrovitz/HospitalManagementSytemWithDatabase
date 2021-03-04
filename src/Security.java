@@ -11,11 +11,25 @@
  */
 class Security extends Staff {
     void insertSecurity() {
-        super.insertStaff("security");
+        super.insertStaff("Security");
     }
     
     void getSecurity() {
-        String sql = "SELECT staff_id, staff_name, desg, sex, salary FROM staff WHERE desg = security";
+        String sql = "SELECT staff_id, staff_name, desg, sex, salary FROM staff WHERE desg = Security";
         super.getStaff(sql);
+    }
+    
+    void chooseSecurityUpdate() throws Throwable {
+        String sqlA = "UPDATE staff " + "SET staff_name = ? " + "WHERE staff_id = ? and desg = 'Security'";
+        String sqlB = "UPDATE staff " + "SET sex = ? " + "WHERE staff_id = ? and desg = 'Security'";
+        String sqlC = "UPDATE staff " + "SET salary = ? " + "WHERE staff_id = ? and desg = 'Security'";
+        super.chooseStaffUpdate("Security", sqlA, sqlB, sqlC);
+    }
+    
+    void deleteSecurity() {
+        String sql = "DELETE FROM staff WHERE staff_id = ? and desg = 'Security'";
+        String entity = "Security";
+        
+        super.deleteEntity(entity, sql);
     }
 }

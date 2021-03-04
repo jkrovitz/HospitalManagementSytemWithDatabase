@@ -11,7 +11,7 @@ import java.util.Scanner;
  * on 6 Nov. 2017. Original source code available here: 
  * https://www.programmingwithbasics.com/2017/11/hospital-management-system-project-in.html
  */
-class Lab {
+class Lab extends Database {
 	private int labId;
 	private String labName;
 	private int labCost;
@@ -93,11 +93,53 @@ class Lab {
     public void displayLab(ResultSet resultSet) throws SQLException {
         System.out.printf("%-25s%-25s%-25s\n",
                 "Lab ID","Lab Name","Lab Cost");
+        System.out.println("---------------------------------------------"
+                + "-------------");
         while (resultSet.next()) {
             System.out.printf("%-25d%-25s%-25d\n",
                     resultSet.getInt("lab_id"),
                     resultSet.getString("lab_name"),
                     resultSet.getInt("lab_cost"));       
         }   
-    }	
+    }
+    
+    void chooseLabUpdate() throws Throwable {
+        String choice;
+        input = new Scanner(System.in);
+
+        String promptBasedOnChoice;
+        String updateSQL;
+
+        Integer updateSelectionInteger = null;
+        String updateSelection = "";
+
+        System.out.print("\nEnter the letter of the update that you would like to make."
+                + "\na. Change the lab's name"
+                + "\nb. Update the cost of the lab\n");
+        choice = input.next();
+
+        switch (choice) {
+            case "a":
+                this.labId = super.getIdOfEntityToUpdate("lab");
+                promptBasedOnChoice = "\nWhat would you like to change the lab's name to? ";
+                updateSQL = "UPDATE lab " + "SET lab_name = ? " + "WHERE lab_id = ?";
+                super.updateEntity(this.labId, this.labName, updateSQL, promptBasedOnChoice, updateSelectionInteger);
+                break;
+
+            case "b":
+                this.labId = super.getIdOfEntityToUpdate("lab");
+                promptBasedOnChoice = "\nWhat is the new cost of the lab?";
+                updateSQL = "UPDATE lab " + "SET lab_cost = ? " + "WHERE lab_id = ?";
+                Integer labCostInteger = labCost;
+                super.updateEntity(this.labId, updateSelection, updateSQL, promptBasedOnChoice, labCostInteger);
+                break;
+        }
+    }
+    
+    void deleteLab() {
+        String sql = "DELETE FROM lab WHERE lab_id = ?";
+        String entity = "lab";
+        
+        super.deleteEntity(entity, sql);
+    }
 }

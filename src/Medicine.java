@@ -11,7 +11,7 @@ import java.util.Scanner;
  * on 6 Nov. 2017. Original source code available here: 
  * https://www.programmingwithbasics.com/2017/11/hospital-management-system-project-in.html
  */
-class Medicine {
+class Medicine extends Database {
     private String medName, medComp, expDate;
     private int medCost, medCount, medId;
     private Scanner input;
@@ -119,6 +119,9 @@ class Medicine {
     private void displayMedicine(ResultSet resultSet) throws SQLException {
         System.out.printf("%-25s%-25s%-25s%-25s%-25s%-25s\n",
                 "Medicine ID","Medicine Name","Company","Expiration Date","Cost","Count");
+        System.out.println("---------------------------------------------"
+                + "-------------------------------------------------------"
+                + "------");
         while (resultSet.next()) {
             System.out.printf("%-25d%-25s%-25s%-25s%-25d%-25d\n",
                     resultSet.getInt("med_id"),
@@ -128,5 +131,70 @@ class Medicine {
                     resultSet.getInt("med_cost"),
                     resultSet.getInt("med_count"));       
         }   
+    }
+    
+    void chooseMedicineUpdate() throws Throwable {
+        String choice;
+        input = new Scanner(System.in);
+
+        String promptBasedOnChoice;
+        String updateSQL;
+
+        Integer updateSelectionInteger = null;
+        String updateSelection = "";
+
+        System.out.print("\nEnter the letter of the update that you would like to make."
+                + "\na. Change the medicine's name"
+                + "\nb. Change the company's medCompment times"
+                + "\nc. Update the expiration date"
+                + "\nd. Update the medicine cost"
+                + "\ne. Update the quantity\n");
+        choice = input.next();
+
+        switch (choice) {
+            case "a":
+                this.medId = super.getIdOfEntityToUpdate("medicine");
+                promptBasedOnChoice = "\nWhat would you like to change the medicine's name to?";
+                updateSQL = "UPDATE medicine " + "SET med_name = ? " + "WHERE med_id = ?";
+                super.updateEntity(this.medId, this.medName, updateSQL, promptBasedOnChoice, updateSelectionInteger);
+                break;
+
+            case "b":
+                this.medId = super.getIdOfEntityToUpdate("medicine");
+                promptBasedOnChoice = "\nWhat is the new medicine company?";
+                updateSQL = "UPDATE medicine " + "SET med_comp = ? " + "WHERE med_id = ?";
+                super.updateEntity(this.medId, this.medComp, updateSQL, promptBasedOnChoice, updateSelectionInteger);
+                break;
+
+            case "c":
+                this.medId = super.getIdOfEntityToUpdate("medicine");
+                promptBasedOnChoice = "\nWhat should the updated expiration date be? ";
+                updateSQL = "UPDATE medicine " + "SET exp_date = ? " + "WHERE med_id = ?";
+                super.updateEntity(this.medId, this.expDate, updateSQL, promptBasedOnChoice, updateSelectionInteger);
+                break;
+
+            case "d":
+                this.medId = super.getIdOfEntityToUpdate("medicine");
+                promptBasedOnChoice = "\nWhat is the new medicine cost? ";
+                updateSQL = "UPDATE medicine " + "SET med_cost = ? " + "WHERE med_id = ?";
+                Integer medCostInteger = medCost;
+                super.updateEntity(this.medId, updateSelection, updateSQL, promptBasedOnChoice, medCostInteger);
+                break;
+
+            case "e":
+                this.medId = super.getIdOfEntityToUpdate("medicine");
+                promptBasedOnChoice = "\nWhat is the quantity of medicine on hand? ";
+                updateSQL = "UPDATE medicine " + "SET med_count = ? " + "WHERE med_id = ?";
+                Integer medCountInteger = medCount;
+                super.updateEntity(this.medId, updateSelection, updateSQL, promptBasedOnChoice, medCountInteger);
+                break;
+        }
+    }
+    
+    void deleteMedicine() {
+        String sql = "DELETE FROM medicine WHERE med_id = ?";
+        String entity = "medicine";
+        
+        super.deleteEntity(entity, sql);
     }
 }

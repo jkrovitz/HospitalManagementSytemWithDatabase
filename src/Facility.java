@@ -11,8 +11,7 @@ import java.util.Scanner;
  * on 6 Nov. 2017. Original source code available here: 
  * https://www.programmingwithbasics.com/2017/11/hospital-management-system-project-in.html
  */
-class Facility
-{
+class Facility extends Database {
     private String facilityName;
     private int facilityId;
     private Database db;
@@ -80,8 +79,28 @@ class Facility
 
     public void displayFacility(ResultSet resultSet) throws SQLException {
         System.out.printf("%-25s%-25s\n", "Facility ID", "Facility Name");
+        System.out.println("-----------------------------------------");
         while (resultSet.next()) {
             System.out.printf("%-25d%-25s\n", resultSet.getInt("facility_id"), resultSet.getString("facility_name"));
         }
+    }
+    
+    void chooseFacilityUpdate() throws Throwable {
+        String promptBasedOnChoice;
+        String updateSQL;
+
+        Integer updateSelectionInteger = null;
+
+        this.facilityId = super.getIdOfEntityToUpdate("facility");
+        promptBasedOnChoice = "\nWhat would you like to change the facility's name to? ";
+        updateSQL = "UPDATE facility " + "SET facility_name = ? " + "WHERE facility_id = ?";
+        super.updateEntity(this.facilityId, this.facilityName, updateSQL, promptBasedOnChoice, updateSelectionInteger);
+    }
+    
+    void deleteFacility() {
+        String sql = "DELETE FROM facility WHERE facility_id = ?";
+        String entity = "facility";
+        
+        super.deleteEntity(entity, sql);
     }
 }
