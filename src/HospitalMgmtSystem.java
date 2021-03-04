@@ -21,7 +21,55 @@ class HospitalMgmtSystem {
     private static Scanner input;
     
     public static void main(String args[]) throws Throwable {
+        welcome();
+        displayCalendar();
+        createTables();
+        chooseEntities();
+    }
+
+    private static void welcome() {
+        System.out.println("---------------------------------------------------------------------------------------------------");
+        System.out.println(" *** Welcome to Hospital Management System Project in Java ***");
+        System.out.println("---------------------------------------------------------------------------------------------------");
+    }
+    
+    private static void displayCalendar() {
+        String months[] = {
+
+                "January", "February", "March", "April",
+
+                "May", "June", "July", "August",
+
+                "September", "October", "November", "December" };
         
+        String days[] = {
+
+                "Sunday", "Monday", "Tuesday", "Wednesday",
+
+                "Thursday", "Friday", "Saturday"};
+
+        Calendar calendar = Calendar.getInstance();
+
+        int mins = calendar.get(Calendar.MINUTE);
+        String minutes = String.format("%02d", mins);
+        
+        int secs = calendar.get(Calendar.SECOND);
+        String seconds = String.format("%02d", secs);
+        
+        int amOrPmInt = calendar.get(Calendar.AM_PM);
+        String amOrPm = null;
+        
+        if (amOrPmInt == 0) amOrPm = "AM";
+        else amOrPm = "PM";
+        
+        System.out.print("Date: " + days[calendar.get(Calendar.DAY_OF_WEEK)-1] + ", " + months[calendar.get(Calendar.MONTH)] + " " + calendar.get(Calendar.DATE) + ", "
+                + calendar.get(Calendar.YEAR));
+
+        System.out.println("\t\t\t\t\t\tTime: " + calendar.get(Calendar.HOUR) + ":" + minutes
+                + ":" + seconds + " " + amOrPm);
+    }
+
+    private static void createTables() throws Throwable {
         doctor = new Doctor();
         doctor.createDoctorTable();
 
@@ -39,12 +87,13 @@ class HospitalMgmtSystem {
 
         staff = new Staff();
         staff.createStaffTable();
-
-        welcome();
-        
-        int choice, status = 1;
+    }
+    
+    private static void chooseEntities() throws Throwable {
         input = new Scanner(System.in);
 
+        int choice, status = 1;
+        
         while (status == 1) {
             mainMenu();
 
@@ -86,53 +135,12 @@ class HospitalMgmtSystem {
         }
         input.close();
     }
-
-    private static void welcome() {
-        String months[] = {
-
-                "January", "February", "March", "April",
-
-                "May", "June", "July", "August",
-
-                "September", "October", "November", "December" };
-        
-        String days[] = {
-
-                "Saturday", "Sunday", "Monday", "Tuesday", "Wednesday",
-
-                "Thursday", "Friday"};
-
-        Calendar calendar = Calendar.getInstance();
-
-        System.out.println("----------------------------------------------------------------------------------------");
-        System.out.println(" *** Welcome to Hospital Management System Project in Java ***");
-        System.out.println("----------------------------------------------------------------------------------------");
-
-        int mins = calendar.get(Calendar.MINUTE);
-        String minutes = String.format("%02d", mins);
-        
-        int secs = calendar.get(Calendar.SECOND);
-        String seconds = String.format("%02d", secs);
-        
-        int amOrPmInt = calendar.get(Calendar.AM_PM);
-        String amOrPm = null;
-        if (amOrPmInt == 0)
-            amOrPm = "AM";
-        else
-            amOrPm = "PM";
-        
-        System.out.print("Date: " + days[calendar.get(Calendar.DAY_OF_WEEK)] + ", " + months[calendar.get(Calendar.MONTH)] + " " + calendar.get(Calendar.DATE) + ", "
-                + calendar.get(Calendar.YEAR));
-
-        System.out.println("\t\t\t\t\t\tTime: " + calendar.get(Calendar.HOUR) + ":" + minutes
-                + ":" + seconds + " " + amOrPm);
-    }
-
+    
     private static void mainMenu() {
         System.out.println("\n MAIN MENU");
-        System.out.println("----------------------------------------------------------------------------------------");
+        System.out.println("---------------------------------------------------------------------------------------------------");
         System.out.println("1.Doctors 2. Patients 3.Medicines 4.Laboratories 5. Facilities 6. Staff ");
-        System.out.println("----------------------------------------------------------------------------------------");
+        System.out.println("---------------------------------------------------------------------------------------------------");
     }
 
     private static void doctorOption() throws Throwable {
