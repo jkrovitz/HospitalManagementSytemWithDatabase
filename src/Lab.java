@@ -5,10 +5,10 @@ import java.util.Scanner;
  * Lab.java
  * @author Jeremy Krovitz
  * 
- * Adds a new lab to the system and lists all of the labs in the system.
+ * Adds, lists, updates, and deletes labs from the system.
  * 
- * This code was adapted and modified from Hospital Management System Project in Java by Ghanendra Yadav
- * on 6 Nov. 2017. Original source code available here: 
+ * This code was modified from Hospital Management System Project in Java by Ghanendra Yadav
+ * on 6 Nov. 2017. Original source code available here:
  * https://www.programmingwithbasics.com/2017/11/hospital-management-system-project-in.html
  */
 class Lab extends Database {
@@ -19,13 +19,10 @@ class Lab extends Database {
 	private Scanner input;
 	
     public void createLabTable() {
-        String LabTable = "CREATE TABLE IF NOT EXISTS lab (\n"
+        super.createTable("CREATE TABLE IF NOT EXISTS lab (\n"
                 + "     lab_id int PRIMARY KEY, \n"
                 + "     lab_name Varchar(40), \n"
-                + "     lab_cost Varchar(40))";
-
-        db = new Database();
-        db.createTable(LabTable);
+                + "     lab_cost Varchar(40))");
     }
     
     public void insertLab() {
@@ -137,9 +134,6 @@ class Lab extends Database {
     }
     
     void deleteLab() {
-        String sql = "DELETE FROM lab WHERE lab_id = ?";
-        String entity = "lab";
-        
-        super.deleteEntity(entity, sql);
+        super.deleteEntity("lab", "DELETE FROM lab WHERE lab_id = ?");
     }
 }

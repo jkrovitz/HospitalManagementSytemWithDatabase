@@ -4,10 +4,10 @@ import java.sql.*;
  * Doctor.java
  * @author Jeremy Krovitz
  * 
- * Adds new doctor to the system and lists all doctors in the system.
+ * Adds, lists, updates, and deletes doctors from the system.
  * 
- * This code was adapted and modified from Hospital Management System Project in Java by Ghanendra Yadav
- * on 6 Nov. 2017. Original source code available here: 
+ * This code was modified from Hospital Management System Project in Java by Ghanendra Yadav
+ * on 6 Nov. 2017. Original source code available here:
  * https://www.programmingwithbasics.com/2017/11/hospital-management-system-project-in.html
  */
 class Doctor extends Database {
@@ -17,16 +17,13 @@ class Doctor extends Database {
     private Scanner input;
     
     void createDoctorTable() throws Throwable {
-        String doctorTable = "CREATE TABLE IF NOT EXISTS doctor (\n"
+        super.createTable("CREATE TABLE IF NOT EXISTS doctor (\n"
                 + "     d_id int PRIMARY KEY, \n"
                 + "     d_name Varchar(40), \n"
                 + "     specialist Varchar(40), \n"
                 + "     appoint Varchar(40), \n"
                 + "     doc_qual Varchar(40), \n"
-                + "     d_room int)";
-
-        db = new Database();
-        db.createTable(doctorTable);
+                + "     d_room int)");
     }
     
     void insertDoctor() {
@@ -128,10 +125,7 @@ class Doctor extends Database {
     }
 
     void deleteDoctor() {
-        String sql = "DELETE FROM doctor WHERE d_id = ?";
-        String entity = "doctor";
-        
-        super.deleteEntity(entity, sql);
+        super.deleteEntity("doctor", "DELETE FROM doctor WHERE d_id = ?");
     }
 
     void chooseDoctorUpdate() throws Throwable {

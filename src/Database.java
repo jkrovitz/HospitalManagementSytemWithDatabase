@@ -4,7 +4,8 @@ import java.util.Scanner;
  * Database.java
  * @author Jeremy Krovitz
  * 
- * Sets up a database connection and creates tables.
+ * Sets up a database connection, creates tables, deletes entities, gets
+ * the id of an entity to update and updates the entity.
  */
 class Database {
     private Scanner input;

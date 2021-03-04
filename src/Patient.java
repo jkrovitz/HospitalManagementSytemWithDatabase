@@ -5,42 +5,36 @@ import java.util.Scanner;
  * Patient.java
  * @author Jeremy Krovitz
  * 
- * Adds a new patient to the system and lists all of the patients in the
- * system. 
+ * Adds, lists, updates, and deletes patients from the system.
  * 
- * This code was adapted and modified from Hospital Management
- * System Project in Java by Ghanendra Yadav on 6 Nov. 2017. Original
- * source code available here:
+ * This code was modified from Hospital Management System Project in Java by Ghanendra Yadav
+ * on 6 Nov. 2017. Original source code available here:
  * https://www.programmingwithbasics.com/2017/11/hospital-management-system-project-in.html
  */
-class Patient
-{
+class Patient extends Database {
     private String pName, disease, sex, admitStatus;
     private int age, pId;
     private Scanner input;
     private Database db;
     
     void createPatientTable() {
-        String patientTable = "CREATE TABLE IF NOT EXISTS patient (\n"
+        super.createTable("CREATE TABLE IF NOT EXISTS patient (\n"
                 + "     p_id int PRIMARY KEY, \n"
                 + "     p_name Varchar(40), \n"
                 + "     disease Varchar(40), \n"
                 + "     sex Varchar(40), \n"
                 + "     admit_status Varchar(40), \n"
-                + "     age int)";
-
-        db = new Database();
-        db.createTable(patientTable);
+                + "     age int)");
     }
     
     void insertPatient() {
-        String SQL = "INSERT INTO patient(p_id, p_name, "
-                + "disease, sex, admit_status, age) "
-                + "VALUES(?,?,?,?,?,?) ON CONFLICT (p_id) DO NOTHING";
         db = new Database();
         
         try (Connection connection = db.connectToDB();
-                PreparedStatement statement = connection.prepareStatement(SQL,
+                PreparedStatement statement = connection.prepareStatement(
+                        "INSERT INTO patient(p_id, p_name, "
+                                + "disease, sex, admit_status, age) "
+                                + "VALUES(?,?,?,?,?,?) ON CONFLICT (p_id) DO NOTHING",
                 Statement.RETURN_GENERATED_KEYS)) {
             
             statement.setInt(1, getpId());
@@ -106,8 +100,6 @@ class Patient
     
     void getPatient() {
         
-        String sql = "SELECT p_id, p_name, disease, sex, admit_status, age FROM patient";
-        
         Connection connection = null;
         Statement statement = null;
         ResultSet resultSet = null;
@@ -116,7 +108,9 @@ class Patient
         try {
             connection = db.connectToDB();
             statement = connection.createStatement();
-            resultSet = statement.executeQuery(sql);
+            resultSet = statement.executeQuery(
+                    "SELECT p_id, p_name, disease, sex, admit_status, age FROM patient"
+            );
             displayPatient(resultSet);
         
         } catch (SQLException ex) {
@@ -161,85 +155,40 @@ class Patient
 
         switch (choice) {
             case "a":
-                this.pId = getIdOfPatientToUpdate();
+                this.pId = getIdOfEntityToUpdate("patient");
                 promptBasedOnChoice = "\nWhat would you like to change the patient's name to? ";
                 updateSQL = "UPDATE patient " + "SET p_name = ? " + "WHERE p_id = ?";
-                updatePatient(this.pId, this.pName, updateSQL, promptBasedOnChoice, updateSelectionInteger);
+                super.updateEntity(this.pId, this.pName, updateSQL, promptBasedOnChoice, updateSelectionInteger);
                 break;
 
             case "b":
-                this.pId = getIdOfPatientToUpdate();
+                this.pId = getIdOfEntityToUpdate("patient");
                 promptBasedOnChoice = "\nWhat would you like to change the patient's disease to? ";
                 updateSQL = "UPDATE patient " + "SET disease = ? " + "WHERE p_id = ?";
-                updatePatient(this.pId, this.disease, updateSQL, promptBasedOnChoice, updateSelectionInteger);
+                super.updateEntity(this.pId, this.disease, updateSQL, promptBasedOnChoice, updateSelectionInteger);
                 break;
 
             case "c":
-                this.pId = getIdOfPatientToUpdate();
+                this.pId = getIdOfEntityToUpdate("patient");
                 promptBasedOnChoice = "\nWhat would you like to change the patient's gender to? ";
                 updateSQL = "UPDATE patient " + "SET sex = ? " + "WHERE p_id = ?";
-                updatePatient(this.pId, this.sex, updateSQL, promptBasedOnChoice, updateSelectionInteger);
+                super.updateEntity(this.pId, this.sex, updateSQL, promptBasedOnChoice, updateSelectionInteger);
                 break;
 
             case "d":
-                this.pId = getIdOfPatientToUpdate();
+                this.pId = getIdOfEntityToUpdate("patient");
                 promptBasedOnChoice = "\nWhat would you like to change the admit status to? ";
                 updateSQL = "UPDATE patient " + "SET admit_status = ? " + "WHERE p_id = ?";
-                updatePatient(this.pId, this.admitStatus, updateSQL, promptBasedOnChoice, updateSelectionInteger);
+                super.updateEntity(this.pId, this.admitStatus, updateSQL, promptBasedOnChoice, updateSelectionInteger);
                 break;
 
             case "e":
-                this.pId = getIdOfPatientToUpdate();
+                this.pId = getIdOfEntityToUpdate("patient");
                 promptBasedOnChoice = "\nWhat should the patient's age be updated to? ";
                 updateSQL = "UPDATE patient " + "SET age = ? " + "WHERE p_id = ?";
                 Integer ageInteger = age;
-                updatePatient(this.pId, updateSelection, updateSQL, promptBasedOnChoice, ageInteger);
+                super.updateEntity(this.pId, updateSelection, updateSQL, promptBasedOnChoice, ageInteger);
                 break;
-        }
-    }
-
-    private int getIdOfPatientToUpdate() {
-        input = new Scanner(System.in);
-        System.out.print("\nWhat is the id that corresponds with the patient that you want to update? ");
-        return input.nextInt();
-    }
-
-    private void updatePatient(int pId, String updateSelection, String sql, String prompt,
-            Integer updateSelectionInteger) {
-        input = new Scanner(System.in);
-        System.out.print(prompt);
-
-        db = new Database();
-
-        if (updateSelection != "") {
-            updateSelection = input.next();
-            try (Connection connection = db.connectToDB();
-                    PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-                statement.setString(1, updateSelection);
-                statement.setInt(2, this.pId);
-
-                statement.executeUpdate();
-                connection.close();
-
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-
-        else if (updateSelectionInteger != null) {
-            int updateSelectionInt = updateSelectionInteger.intValue();
-            updateSelectionInt = input.nextInt();
-            try (Connection connection = db.connectToDB();
-                    PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-                statement.setInt(1, updateSelectionInt);
-                statement.setInt(2, this.pId);
-
-                statement.executeUpdate();
-                connection.close();
-
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            }
         }
     }
 }

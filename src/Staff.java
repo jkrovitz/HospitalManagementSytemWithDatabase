@@ -6,14 +6,12 @@ import java.util.Scanner;
  * 
  * @author Jeremy Krovitz
  * 
- *         Parent class creates new staff of type Nurse, Worker, and Security as
- *         well as lists all of the instances for each type—Nurse, Worker, and
- *         Security— in the system.
- * 
- *         This code was adapted and modified from Hospital Management System
- *         Project in Java by Ghanendra Yadav on 6 Nov. 2017. Original source
- *         code available here:
- *         https://www.programmingwithbasics.com/2017/11/hospital-management-system-project-in.html
+ * Parent class creates, lists, and updates staff of type Nurse, Worker, and
+ * Security from the system.
+ *         
+ * This code was adapted and modified from Hospital Management System Project in Java by 
+ * Ghanendra Yadav on 6 Nov. 2017. Original source code available here: 
+ * https://www.programmingwithbasics.com/2017/11/hospital-management-system-project-in.html
  */
 class Staff extends Database {
     private String staffName, sex;
@@ -22,25 +20,22 @@ class Staff extends Database {
     private Scanner input;
     
    void createStaffTable() {
-        String staffTable = "CREATE TABLE IF NOT EXISTS staff (\n"
+        super.createTable("CREATE TABLE IF NOT EXISTS staff (\n"
                 + "     staff_id int PRIMARY KEY, \n"
                 + "     staff_name Varchar(40), \n"
                 + "     desg Varchar(40), \n"
                 + "     sex Varchar(40), \n"
-                + "     salary int)";
-
-        db = new Database();
-        db.createTable(staffTable);
+                + "     salary int)");
     }
     
     void insertStaff(String desg) {
-        String SQL = "INSERT INTO staff(staff_id, staff_name, "
-                + "desg, sex, salary) "
-                + "VALUES(?,?, ?,?,?) ON CONFLICT (staff_id) DO NOTHING";
         db = new Database();
         
         try (Connection connection = db.connectToDB();
-                PreparedStatement statement = connection.prepareStatement(SQL,
+                PreparedStatement statement = connection.prepareStatement(
+                        "INSERT INTO staff(staff_id, staff_name, "
+                                + "desg, sex, salary) "
+                                + "VALUES(?,?, ?,?,?) ON CONFLICT (staff_id) DO NOTHING",
                 Statement.RETURN_GENERATED_KEYS)) {
             
             statement.setInt(1, getStaffId());

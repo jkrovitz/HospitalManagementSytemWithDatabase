@@ -5,10 +5,10 @@ import java.util.Scanner;
  * Medicine.java
  * @author Jeremy Krovitz
  * 
- * Adds a new medicine to the system and lists all of the medicines in the system.
+ * Adds, lists, updates, and deletes medicine from the system.
  * 
- * This code was adapted and modified from Hospital Management System Project in Java by Ghanendra Yadav
- * on 6 Nov. 2017. Original source code available here: 
+ * This code was modified from Hospital Management System Project in Java by Ghanendra Yadav
+ * on 6 Nov. 2017. Original source code available here:
  * https://www.programmingwithbasics.com/2017/11/hospital-management-system-project-in.html
  */
 class Medicine extends Database {
@@ -18,26 +18,24 @@ class Medicine extends Database {
     private Database db;
 
     void createMedicineTable() {
-        String medicineTable = "CREATE TABLE IF NOT EXISTS medicine (\n"
+        super.createTable("CREATE TABLE IF NOT EXISTS medicine (\n"
                 + "     med_id int PRIMARY KEY, \n"
                 + "     med_name Varchar(40), \n"
                 + "     med_comp Varchar(40), \n"
                 + "     exp_date Varchar(40), \n"
                 + "     med_cost int, \n"
-                + "     med_count int)";
-
-        db = new Database();
-        db.createTable(medicineTable);
+                + "     med_count int)");
     }
 
     void insertMedicine() {
-        String SQL = "INSERT INTO medicine(med_id, med_name, "
-                + "med_comp, exp_date, med_cost, med_count) "
-                + "VALUES(?,?,?,?,?,?) ON CONFLICT (med_id) DO NOTHING";
         db = new Database();
 
         try (Connection connection = db.connectToDB();
-                PreparedStatement statement = connection.prepareStatement(SQL,
+                PreparedStatement statement = connection.prepareStatement(
+                        "INSERT INTO medicine(med_id, med_name, "
+                        + "med_comp, exp_date, med_cost, med_count) "
+                        + "VALUES(?,?,?,?,?,?) ON CONFLICT (med_id) "
+                        + "DO NOTHING",
                         Statement.RETURN_GENERATED_KEYS)) {
 
             statement.setInt(1, getMedId());
@@ -98,8 +96,6 @@ class Medicine extends Database {
 
     void getMedicine() {
 
-        String sql = "SELECT med_id, med_name, med_comp, exp_date, med_cost, med_count FROM medicine";
-
         Connection connection = null;
         Statement statement = null;
         ResultSet resultSet = null;
@@ -108,7 +104,9 @@ class Medicine extends Database {
         try {
             connection = db.connectToDB();
             statement = connection.createStatement();
-            resultSet = statement.executeQuery(sql);
+            resultSet = statement.executeQuery(
+                    "SELECT med_id, med_name, med_comp, exp_date, med_cost, med_count FROM medicine ORDER BY med_id"
+            );
             displayMedicine(resultSet);
 
         } catch (SQLException ex) {
@@ -145,7 +143,7 @@ class Medicine extends Database {
 
         System.out.print("\nEnter the letter of the update that you would like to make."
                 + "\na. Change the medicine's name"
-                + "\nb. Change the company's medCompment times"
+                + "\nb. Change the company's name"
                 + "\nc. Update the expiration date"
                 + "\nd. Update the medicine cost"
                 + "\ne. Update the quantity\n");
@@ -191,10 +189,7 @@ class Medicine extends Database {
         }
     }
     
-    void deleteMedicine() {
-        String sql = "DELETE FROM medicine WHERE med_id = ?";
-        String entity = "medicine";
-        
-        super.deleteEntity(entity, sql);
+    void deleteMedicine() {        
+        super.deleteEntity("medicine", "DELETE FROM medicine WHERE med_id = ?");
     }
 }

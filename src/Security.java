@@ -2,8 +2,7 @@
  * Security.java
  * @author Jeremy Krovitz
  * 
- * Adds new security guards to the system and lists all of the security guards in the
- * system. 
+ * Adds, lists, updates, and deletes security from the system.
  * 
  * This code was modified from Hospital Management System Project in Java by Ghanendra Yadav
  * on 6 Nov. 2017. Original source code available here:
@@ -15,8 +14,7 @@ class Security extends Staff {
     }
     
     void getSecurity() {
-        String sql = "SELECT staff_id, staff_name, desg, sex, salary FROM staff WHERE desg = Security";
-        super.getStaff(sql);
+        super.getStaff("SELECT staff_id, staff_name, desg, sex, salary FROM staff WHERE desg = Security");
     }
     
     void chooseSecurityUpdate() throws Throwable {
@@ -27,9 +25,6 @@ class Security extends Staff {
     }
     
     void deleteSecurity() {
-        String sql = "DELETE FROM staff WHERE staff_id = ? and desg = 'Security'";
-        String entity = "Security";
-        
-        super.deleteEntity(entity, sql);
+        super.deleteEntity("Security", "DELETE FROM staff WHERE staff_id = ? and desg = 'Security'");
     }
 }

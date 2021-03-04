@@ -2,12 +2,10 @@
  * Worker.java
  * @author Jeremy Krovitz
  * 
- * Adds a new worker to the system and lists all of the workers in the
- * system. 
+ * Adds, lists, updates, and deletes workers from the system.
  * 
- * This code was modified from Hospital Management
- * System Project in Java by Ghanendra Yadav on 6 Nov. 2017. Original
- * source code available here:
+ * This code was adapted and modified from Hospital Management System Project in Java by 
+ * Ghanendra Yadav on 6 Nov. 2017. Original source code available here: 
  * https://www.programmingwithbasics.com/2017/11/hospital-management-system-project-in.html
  */
 class Worker extends Staff {
@@ -17,8 +15,7 @@ class Worker extends Staff {
     }
     
     void getWorker() {
-        String sql = "SELECT staff_id, staff_name, desg, sex, salary FROM staff WHERE desg = Worker";
-        super.getStaff(sql);
+        super.getStaff("SELECT staff_id, staff_name, desg, sex, salary FROM staff WHERE desg = Worker");
     }
     
     void chooseWorkerUpdate() throws Throwable {
@@ -29,9 +26,6 @@ class Worker extends Staff {
     }
     
     void deleteWorker() {
-        String sql = "DELETE FROM staff WHERE staff_id = ? and desg = 'Worker'";
-        String entity = "Worker";
-        
-        super.deleteEntity(entity, sql);
+        super.deleteEntity("Worker", "DELETE FROM staff WHERE staff_id = ? and desg = 'Worker'");
     }
 }

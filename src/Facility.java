@@ -5,10 +5,10 @@ import java.util.Scanner;
  * Facility.java
  * @author Jeremy Krovitz
  * 
- * Adds a new facility to the system and lists all of the facilities in the system.
+ * Adds, lists, updates, and deletes facilities from the system.
  * 
- * This code was adapted and modified from Hospital Management System Project in Java by Ghanendra Yadav
- * on 6 Nov. 2017. Original source code available here: 
+ * This code was modified from Hospital Management System Project in Java by Ghanendra Yadav
+ * on 6 Nov. 2017. Original source code available here:
  * https://www.programmingwithbasics.com/2017/11/hospital-management-system-project-in.html
  */
 class Facility extends Database {
@@ -17,16 +17,13 @@ class Facility extends Database {
     private Database db;
     private Scanner input;
 
-    public void createFacilityTable() {
-        String facilityTable = "CREATE TABLE IF NOT EXISTS facility (\n" 
+    void createFacilityTable() {
+        super.createTable("CREATE TABLE IF NOT EXISTS facility (\n" 
                 + "     facility_id int PRIMARY KEY, \n"
-                + "     facility_name Varchar(40))";
-
-        db = new Database();
-        db.createTable(facilityTable);
+                + "     facility_name Varchar(40))");
     }
 
-    public void insertFacility() {
+    void insertFacility() {
         String SQL = "INSERT INTO facility(facility_id, facility_name) "
                 + "VALUES(?,?) ON CONFLICT (facility_id) DO NOTHING";
         db = new Database();
@@ -43,24 +40,21 @@ class Facility extends Database {
         }
     }
 
-    public int getFacilityId() {
+    int getFacilityId() {
         input = new Scanner(System.in);
         System.out.print("Facility ID:-");
         this.facilityId = input.nextInt();
         return this.facilityId;
     }
 
-    public String getFacilityName() {
+    String getFacilityName() {
         input = new Scanner(System.in);
         System.out.print("Facility Name:-");
         this.facilityName = input.next();
         return this.facilityName;
     }
 
-    public void getFacility() {
-
-        String sql = "SELECT facility_id, facility_name FROM facility";
-
+    void getFacility() {
         Connection connection = null;
         Statement statement = null;
         ResultSet resultSet = null;
@@ -69,7 +63,7 @@ class Facility extends Database {
         try {
             connection = db.connectToDB();
             statement = connection.createStatement();
-            resultSet = statement.executeQuery(sql);
+            resultSet = statement.executeQuery("SELECT facility_id, facility_name FROM facility");
             displayFacility(resultSet);
 
         } catch (SQLException e) {
@@ -77,7 +71,7 @@ class Facility extends Database {
         }
     }
 
-    public void displayFacility(ResultSet resultSet) throws SQLException {
+    void displayFacility(ResultSet resultSet) throws SQLException {
         System.out.printf("%-25s%-25s\n", "Facility ID", "Facility Name");
         System.out.println("-----------------------------------------");
         while (resultSet.next()) {
@@ -86,21 +80,13 @@ class Facility extends Database {
     }
     
     void chooseFacilityUpdate() throws Throwable {
-        String promptBasedOnChoice;
-        String updateSQL;
-
-        Integer updateSelectionInteger = null;
-
         this.facilityId = super.getIdOfEntityToUpdate("facility");
-        promptBasedOnChoice = "\nWhat would you like to change the facility's name to? ";
-        updateSQL = "UPDATE facility " + "SET facility_name = ? " + "WHERE facility_id = ?";
-        super.updateEntity(this.facilityId, this.facilityName, updateSQL, promptBasedOnChoice, updateSelectionInteger);
+        super.updateEntity(this.facilityId, this.facilityName,
+                "UPDATE facility " + "SET facility_name = ? " + "WHERE facility_id = ?",
+                "\nWhat would you like to change the facility's name to? ", null);
     }
     
     void deleteFacility() {
-        String sql = "DELETE FROM facility WHERE facility_id = ?";
-        String entity = "facility";
-        
-        super.deleteEntity(entity, sql);
+        super.deleteEntity("facility", "DELETE FROM facility WHERE facility_id = ?");
     }
 }
