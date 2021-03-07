@@ -41,34 +41,62 @@ class HospitalMgmtSystem {
                 "May", "June", "July", "August",
 
                 "September", "October", "November", "December" };
-        
+
         String days[] = {
 
                 "Sunday", "Monday", "Tuesday", "Wednesday",
 
-                "Thursday", "Friday", "Saturday"};
+                "Thursday", "Friday", "Saturday" };
 
         Calendar calendar = Calendar.getInstance();
 
         int mins = calendar.get(Calendar.MINUTE);
         String minutes = String.format("%02d", mins);
-        
+
         int secs = calendar.get(Calendar.SECOND);
         String seconds = String.format("%02d", secs);
-        
-        int amOrPmInt = calendar.get(Calendar.AM_PM);
-        String amOrPm = null;
-        
-        if (amOrPmInt == 0) amOrPm = "AM";
-        else amOrPm = "PM";
-        
-        System.out.print("Date: " + days[calendar.get(Calendar.DAY_OF_WEEK)-1] + ", " + months[calendar.get(Calendar.MONTH)] + " " + calendar.get(Calendar.DATE) + ", "
-                + calendar.get(Calendar.YEAR));
 
-        System.out.println("\t\t\t\t\t\tTime: " + calendar.get(Calendar.HOUR) + ":" + minutes
-                + ":" + seconds + " " + amOrPm);
+        System.out.print(
+                "Date: " + days[calendar.get(Calendar.DAY_OF_WEEK) - 1] + ", " + months[calendar.get(Calendar.MONTH)]
+                        + " " + calendar.get(Calendar.DATE) + ", " + calendar.get(Calendar.YEAR));
+
+        String timeString = calendar.get(Calendar.HOUR_OF_DAY) + ":" + minutes + ":" + seconds;
+
+        int h1 = (int) timeString.charAt(0) - '0';
+        int h2 = (int) timeString.charAt(1) - '0';
+
+        int hh = h1 * 10 + h2;
+
+        // AM OR PM
+        String amOrPmStr;
+        if (hh < 12) {
+            amOrPmStr = "AM";
+        } else
+            amOrPmStr = "PM";
+
+        hh %= 12;
+
+        // Handle 00 and 12 case separately
+        if (hh == 0) {
+            System.out.print("\t\t\t\t\t\tTime: " + "12");
+
+            // Printing minutes and seconds
+            for (int i = 2; i < 8; ++i) {
+                System.out.print(timeString.charAt(i));
+            }
+        } else {
+            System.out.print("\t\t\t\t\t\tTime: " + hh);
+
+            // Printing minutes and seconds
+            for (int i = 2; i < 8; ++i) {
+                System.out.print(timeString.charAt(i));
+            }
+        }
+
+        // After time is printed
+        System.out.println(" " + amOrPmStr);
     }
-
+    
     private static void createTables() throws Throwable {
         doctor = new Doctor();
         doctor.createDoctorTable();
